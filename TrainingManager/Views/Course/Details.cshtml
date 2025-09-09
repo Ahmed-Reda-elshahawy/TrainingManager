@@ -1,0 +1,10 @@
+﻿@model DetailsVM
+
+<h2>@Model.Name</h2>
+<p>@Model.Description</p>
+<p>@Model.InstructorName</p>
+
+<h1>Are you sure ?</h1>
+<form asp-action="ConfirmDelete" method="post" asp-route-id="@Model.Id">
+    <button class="btn btn-danger" type="submit">Delete</button>
+</form>

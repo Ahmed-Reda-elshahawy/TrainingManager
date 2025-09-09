@@ -1,0 +1,18 @@
+﻿@model CreateVM;
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="input-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    @await Html.PartialAsync("_CourseFormParial", Model);
+
+    <button type="submit">Add Course</button>
+</form>
+
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}
