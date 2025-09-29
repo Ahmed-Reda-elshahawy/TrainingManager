@@ -1,0 +1,33 @@
+﻿<main>
+    <aside id="sidebar" class="sidebar">
+        <button class="btn btn-sm rounded-0 border-0 position-absolute rounded-end-circle fw-bold text-black-50 fs-3 d-md-none" id="sidebarToggle">
+            #
+        </button>
+        <div class="text-black-50 sidebar-header text-center pb-3">
+            <h4>DashMenu</h4>
+        </div>
+        <ul>
+            <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")">
+                @Html.ActionLink("Dashboard", "Index", "Admin")
+            </li>
+            <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Instructors" ? "active" : "")">
+                @Html.ActionLink("Instructors", "Index", "Instructors")
+            </li>
+            <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Trainees" ? "active" : "")">
+                @Html.ActionLink("Trainees", "Index", "Trainees")
+            </li>
+            <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Tracks" ? "active" : "")">
+                @Html.ActionLink("Tracks", "Index", "Tracks")
+            </li>
+            <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")">
+                @Html.ActionLink("Courses", "Index", "Courses")
+            </li>
+        </ul>
+    </aside>
+
+    <section></section>
+</main>
+
+@section Scripts{
+    <script src="/js/Dashboard/dashboard.js"></script>
+}

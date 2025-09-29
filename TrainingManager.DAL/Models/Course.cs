@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TrainingManager.DAL.Models;
 
 namespace TrainingManager.Models
 {
@@ -25,8 +26,11 @@ namespace TrainingManager.Models
         public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
 
-        public Guid? InstructorId { get; set; }
+        // navigation
+        public Track? Track { get; set; }
+        public Guid? TrackId { get; set; }
         public Instructor? Instructor { get; set; }
+        public Guid? InstructorId { get; set; }
         public virtual ICollection<Session> Sessions { get; set; } = new HashSet<Session>();
     }
 }

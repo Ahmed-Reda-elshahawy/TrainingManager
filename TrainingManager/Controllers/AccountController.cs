@@ -1,24 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using TrainingManager.BLL.Services.Interfaces;
 using TrainingManager.BLL.ViewModels.User;
+using TrainingManager.DAL.Repositories;
 
 namespace TrainingManager.Controllers
 {
-    public class AccountController(IAccountService accountService) : Controller
+    public class AccountController(IAccountService accountService, ITrackService trackService) : Controller
     {
         private readonly IAccountService _accountService = accountService;
-        
+        private readonly ITrackService trackService = trackService;
+
         #region Register
 
         [HttpGet]
-        public IActionResult RegisterTrainee()
+        public async Task<IActionResult> RegisterTrainee()
         {
+            ViewBag.Tracks = await trackService.GetAllAsync();
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> RegisterTrainee(RegisterTraineeVM model)
         {
+            ViewBag.Tracks = await trackService.GetAllAsync();
             if (!ModelState.IsValid)
             {
                 return View(model);

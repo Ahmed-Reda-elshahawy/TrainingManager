@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TrainingManager.BLL.Services;
 using TrainingManager.BLL.Services.Interfaces;
 using TrainingManager.Configurations;
+using TrainingManager.DAL.Data.Seeding;
 using TrainingManager.DAL.Models;
 using TrainingManager.DAL.Repositories;
 using TrainingManager.DAL.Repositories.Interfaces;
@@ -27,6 +28,7 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITrackService, TrackService>();
 
 builder.Services.Configure<CourseSettings>(builder.Configuration.GetSection(nameof(CourseSettings)));
 
@@ -41,6 +43,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(opt =>
 
 var app = builder.Build(); // finalizes the configuration and prepares the application.
 
+// run seeding
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await DbSeeder.SeedAsync(services);
+}
 #endregion
 
 

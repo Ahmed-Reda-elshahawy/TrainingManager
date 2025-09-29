@@ -8,6 +8,7 @@ namespace TrainingManager.DAL.Repositories.Interfaces
         IGenericRepo<Instructor> Instructors { get; }
         IGenericRepo<Trainee> Trainees { get; }
         IGenericRepo<Admin> Admins { get; }
+        IGenericRepo<Track> Tracks { get; }
         ICourseRepo Courses { get; }
         Task<int> CompleteAsync();
     }

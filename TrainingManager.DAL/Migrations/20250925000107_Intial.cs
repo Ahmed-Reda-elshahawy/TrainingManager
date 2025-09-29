@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrainingManager.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Intial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -201,22 +201,24 @@ namespace TrainingManager.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Trainees",
+                name: "Tracks",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Track = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Duration_Weeks = table.Column<int>(type: "int", nullable: false),
+                    Created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Trainees", x => x.Id);
+                    table.PrimaryKey("PK_Tracks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Trainees_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Tracks_Admins_AdminId",
+                        column: x => x.AdminId,
+                        principalTable: "Admins",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -230,6 +232,7 @@ namespace TrainingManager.DAL.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    TrackId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -239,6 +242,35 @@ namespace TrainingManager.DAL.Migrations
                         name: "FK_Courses_Instructors_InstructorId",
                         column: x => x.InstructorId,
                         principalTable: "Instructors",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Courses_Tracks_TrackId",
+                        column: x => x.TrackId,
+                        principalTable: "Tracks",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Trainees",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TrackId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trainees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Trainees_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Trainees_Tracks_TrackId",
+                        column: x => x.TrackId,
+                        principalTable: "Tracks",
                         principalColumn: "Id");
                 });
 
@@ -272,31 +304,32 @@ namespace TrainingManager.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TraineeSessions",
+                name: "Evaluations",
                 columns: table => new
                 {
                     TraineeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SessionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EnrolledAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    Grade = table.Column<int>(type: "int", nullable: true),
-                    CompletionDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Score = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TraineeSessions", x => new { x.TraineeId, x.SessionId });
+                    table.PrimaryKey("PK_Evaluations", x => new { x.TraineeId, x.SessionId, x.InstructorId });
                     table.ForeignKey(
-                        name: "FK_TraineeSessions_Sessions_SessionId",
+                        name: "FK_Evaluations_Instructors_InstructorId",
+                        column: x => x.InstructorId,
+                        principalTable: "Instructors",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Evaluations_Sessions_SessionId",
                         column: x => x.SessionId,
                         principalTable: "Sessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_TraineeSessions_Trainees_TraineeId",
+                        name: "FK_Evaluations_Trainees_TraineeId",
                         column: x => x.TraineeId,
                         principalTable: "Trainees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -350,6 +383,21 @@ namespace TrainingManager.DAL.Migrations
                 column: "InstructorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Courses_TrackId",
+                table: "Courses",
+                column: "TrackId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evaluations_InstructorId",
+                table: "Evaluations",
+                column: "InstructorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evaluations_SessionId",
+                table: "Evaluations",
+                column: "SessionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Instructors_UserId",
                 table: "Instructors",
                 column: "UserId",
@@ -366,23 +414,25 @@ namespace TrainingManager.DAL.Migrations
                 column: "InstructorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tracks_AdminId",
+                table: "Tracks",
+                column: "AdminId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trainees_TrackId",
+                table: "Trainees",
+                column: "TrackId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Trainees_UserId",
                 table: "Trainees",
                 column: "UserId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TraineeSessions_SessionId",
-                table: "TraineeSessions",
-                column: "SessionId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Admins");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -399,7 +449,7 @@ namespace TrainingManager.DAL.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "TraineeSessions");
+                name: "Evaluations");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -415,6 +465,12 @@ namespace TrainingManager.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Instructors");
+
+            migrationBuilder.DropTable(
+                name: "Tracks");
+
+            migrationBuilder.DropTable(
+                name: "Admins");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

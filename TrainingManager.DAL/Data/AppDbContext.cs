@@ -15,9 +15,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<Instructor> Instructors => Set<Instructor>();
     public DbSet<Trainee> Trainees => Set<Trainee>();
     public DbSet<Admin> Admins => Set<Admin>();
+    public DbSet<Track> Tracks => Set<Track>();
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Session> Sessions => Set<Session>();
-    public DbSet<TraineeSession> TraineeSessions => Set<TraineeSession>();
+    public DbSet<Evaluation> Evaluations => Set<Evaluation>();
 
 
 

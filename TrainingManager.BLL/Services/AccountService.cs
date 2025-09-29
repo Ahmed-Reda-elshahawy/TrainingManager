@@ -41,6 +41,7 @@ namespace TrainingManager.BLL.Services
                 var admin = new Admin
                 {
                     Id = Guid.NewGuid(),
+                    UserId = user.Id,
                 };
                 await _unitOfWork.Admins.AddAsync(admin);
                 await _unitOfWork.CompleteAsync();
@@ -71,7 +72,8 @@ namespace TrainingManager.BLL.Services
                     Id = Guid.NewGuid(),
                     Bio = model.Bio,
                     HourlyRate = 100,
-                    Specialization = model.Specialization
+                    Specialization = model.Specialization,
+                    UserId = user.Id,
                 };
                 await _unitOfWork.Instructors.AddAsync(instructor);
                 await _unitOfWork.CompleteAsync();
@@ -84,6 +86,7 @@ namespace TrainingManager.BLL.Services
         {
             var user = new ApplicationUser
             {
+                Id = Guid.NewGuid(),
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
@@ -99,7 +102,7 @@ namespace TrainingManager.BLL.Services
                 var trainee = new Trainee
                 {
                     Id= Guid.NewGuid(),
-                    Track = model.Track,
+                    TrackId = model.TrackId,
                     UserId = user.Id
                 };
                 await _unitOfWork.Trainees.AddAsync(trainee);

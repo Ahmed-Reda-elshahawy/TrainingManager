@@ -252,27 +252,7 @@ namespace TrainingManager.DAL.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("TrainingManager.DAL.Models.Trainee", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Track")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Trainees");
-                });
-
-            modelBuilder.Entity("TrainingManager.DAL.Models.TraineeSession", b =>
+            modelBuilder.Entity("TrainingManager.DAL.Models.Evaluation", b =>
                 {
                     b.Property<Guid>("TraineeId")
                         .HasColumnType("uniqueidentifier");
@@ -280,23 +260,71 @@ namespace TrainingManager.DAL.Migrations
                     b.Property<Guid>("SessionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("CompletionDate")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("InstructorId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("EnrolledAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Grade")
+                    b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
+                    b.HasKey("TraineeId", "SessionId", "InstructorId");
 
-                    b.HasKey("TraineeId", "SessionId");
+                    b.HasIndex("InstructorId");
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("TraineeSessions");
+                    b.ToTable("Evaluations");
+                });
+
+            modelBuilder.Entity("TrainingManager.DAL.Models.Track", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AdminId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Duration_Weeks")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.ToTable("Tracks");
+                });
+
+            modelBuilder.Entity("TrainingManager.DAL.Models.Trainee", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TrackId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrackId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Trainees");
                 });
 
             modelBuilder.Entity("TrainingManager.Models.Course", b =>
@@ -330,9 +358,14 @@ namespace TrainingManager.DAL.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("TrackId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("InstructorId");
+
+                    b.HasIndex("TrackId");
 
                     b.ToTable("Courses");
                 });
@@ -474,34 +507,57 @@ namespace TrainingManager.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TrainingManager.DAL.Models.Evaluation", b =>
+                {
+                    b.HasOne("TrainingManager.Models.Instructor", "Instructor")
+                        .WithMany("Evaluations")
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrainingManager.Models.Session", "Session")
+                        .WithMany("Evaluations")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrainingManager.DAL.Models.Trainee", "Trainee")
+                        .WithMany("Evaluations")
+                        .HasForeignKey("TraineeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Instructor");
+
+                    b.Navigation("Session");
+
+                    b.Navigation("Trainee");
+                });
+
+            modelBuilder.Entity("TrainingManager.DAL.Models.Track", b =>
+                {
+                    b.HasOne("TrainingManager.DAL.Models.Admin", "Admin")
+                        .WithMany("Tracks")
+                        .HasForeignKey("AdminId");
+
+                    b.Navigation("Admin");
+                });
+
             modelBuilder.Entity("TrainingManager.DAL.Models.Trainee", b =>
                 {
+                    b.HasOne("TrainingManager.DAL.Models.Track", "Track")
+                        .WithMany("Trainees")
+                        .HasForeignKey("TrackId");
+
                     b.HasOne("TrainingManager.DAL.Models.ApplicationUser", "User")
                         .WithOne("TraineeProfile")
                         .HasForeignKey("TrainingManager.DAL.Models.Trainee", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Track");
+
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TrainingManager.DAL.Models.TraineeSession", b =>
-                {
-                    b.HasOne("TrainingManager.Models.Session", "Session")
-                        .WithMany("TraineeSessions")
-                        .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TrainingManager.DAL.Models.Trainee", "Trainee")
-                        .WithMany("TraineeSessions")
-                        .HasForeignKey("TraineeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Session");
-
-                    b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("TrainingManager.Models.Course", b =>
@@ -510,7 +566,13 @@ namespace TrainingManager.DAL.Migrations
                         .WithMany("Courses")
                         .HasForeignKey("InstructorId");
 
+                    b.HasOne("TrainingManager.DAL.Models.Track", "Track")
+                        .WithMany("Courses")
+                        .HasForeignKey("TrackId");
+
                     b.Navigation("Instructor");
+
+                    b.Navigation("Track");
                 });
 
             modelBuilder.Entity("TrainingManager.Models.Instructor", b =>
@@ -539,6 +601,11 @@ namespace TrainingManager.DAL.Migrations
                     b.Navigation("Instructor");
                 });
 
+            modelBuilder.Entity("TrainingManager.DAL.Models.Admin", b =>
+                {
+                    b.Navigation("Tracks");
+                });
+
             modelBuilder.Entity("TrainingManager.DAL.Models.ApplicationUser", b =>
                 {
                     b.Navigation("AdminProfile");
@@ -548,9 +615,16 @@ namespace TrainingManager.DAL.Migrations
                     b.Navigation("TraineeProfile");
                 });
 
+            modelBuilder.Entity("TrainingManager.DAL.Models.Track", b =>
+                {
+                    b.Navigation("Courses");
+
+                    b.Navigation("Trainees");
+                });
+
             modelBuilder.Entity("TrainingManager.DAL.Models.Trainee", b =>
                 {
-                    b.Navigation("TraineeSessions");
+                    b.Navigation("Evaluations");
                 });
 
             modelBuilder.Entity("TrainingManager.Models.Course", b =>
@@ -562,12 +636,14 @@ namespace TrainingManager.DAL.Migrations
                 {
                     b.Navigation("Courses");
 
+                    b.Navigation("Evaluations");
+
                     b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("TrainingManager.Models.Session", b =>
                 {
-                    b.Navigation("TraineeSessions");
+                    b.Navigation("Evaluations");
                 });
 #pragma warning restore 612, 618
         }

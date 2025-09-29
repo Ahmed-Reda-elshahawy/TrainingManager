@@ -18,7 +18,27 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #F9FAFB;
+    color: #374151;
+}
+
+*{
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
+}
+
+.navbar, footer {
+    background-color: #5598c3;
+}
+
+.app-logo {
+    width: 3rem;
+}
+
+button {
+    background-color: #F2994A;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {

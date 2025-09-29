@@ -26,6 +26,7 @@ namespace TrainingManager.Models
         public ApplicationUser User { get; set; } = null!;
         public virtual ICollection<Course> Courses { get; set; } = new HashSet<Course>();
         public virtual ICollection<Session> Sessions { get; set; } = new HashSet<Session>();
+        public virtual ICollection<Evaluation> Evaluations { get; set; } = new HashSet<Evaluation>();
     }
 
 }

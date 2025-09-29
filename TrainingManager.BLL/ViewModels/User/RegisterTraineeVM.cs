@@ -1,9 +1,12 @@
-﻿using TrainingManager.DAL.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using TrainingManager.DAL.Models;
 
 namespace TrainingManager.BLL.ViewModels.User
 {
     public class RegisterTraineeVM : RegisterVM
     {
-        public Tracks Track { get; set; }
+        [Required]
+        [Display(Name ="Track")]
+        public Guid TrackId { get; set; }
     }
 }

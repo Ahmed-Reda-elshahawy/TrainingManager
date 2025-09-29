@@ -23,6 +23,6 @@ namespace TrainingManager.Models
         public virtual Course? Course { get; set; }
         public Guid? InstructorId { get; set; }
         public virtual Instructor? Instructor { get; set; }
-        public virtual ICollection<TraineeSession> TraineeSessions { get; set; } = new HashSet<TraineeSession>();
+        public virtual ICollection<Evaluation> Evaluations { get; set; } = new HashSet<Evaluation>();
     }
 }

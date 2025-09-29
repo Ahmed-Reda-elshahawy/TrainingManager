@@ -32,7 +32,7 @@ namespace TrainingManager.BLL.Services
 
         public async Task<bool> UserHasRoleAsync(Guid userId, string roleName)
         {
-            var user = await _userManager.FindByIdAsync(roleName.ToString());
+            var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null) return false;
 
             return await _userManager.IsInRoleAsync(user, roleName);
